@@ -18,40 +18,36 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SecurityServiceTest {
-@Mock
-private SecurityRepository SecurityRepository;
-@Mock
-private ImageServicesInterface ImageServices;
+    @Mock
+    private SecurityRepository SecurityRepository;
+    @Mock
+    private ImageServicesInterface ImageServices;
+    private ArmingStatus armingStatus;
+    private AlarmStatus alarmStatus;
+    private SecurityService securityService;
 
-
-private Set<Sensor> sensors = new HashSet<>();
-private ArmingStatus armingStatus;
-private AlarmStatus alarmStatus;
-private com.mukhtar.UdaSecurity.Services.SecurityService SecurityService;
-
-@BeforeEach
-void init(){
-    SecurityService = new SecurityService(SecurityRepository, ImageServices);
-}
+    @BeforeEach
+    void init(){
+        securityService = new SecurityService(SecurityRepository, ImageServices);
+    }
 
     @ParameterizedTest
     @EnumSource( value=ArmingStatus.class, names = {"ARMED_HOME", "ARMED_AWAY"})
-public void sensorActivated_alarmArmedAndStatusPending_alarmStatusAlarm(ArmingStatus armingStatus){
+    public void sensorActivated_alarmArmedAndStatusPending_alarmStatusAlarm(ArmingStatus armingStatus){
 
-    //Given
-        sensors.add(new Sensor("TestDoor", SensorType.DOOR,false));
-        sensors.add(new Sensor("TestWindow", SensorType.WINDOW,false));
-        sensors.add(new Sensor("TestMotion", SensorType.MOTION,false));
+        //Given
+        Sensor sensor1 = new Sensor("TestDoor", SensorType.DOOR,false);
 
-       when(SecurityRepository.getArmingStatus()).thenReturn(armingStatus);
-       when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.NO_ALARM);
 
-       //when
-        sensors.forEach(sensor -> SecurityService.changeSensorActivationStatus(sensor,true));
+        when(SecurityRepository.getArmingStatus()).thenReturn(armingStatus);
+        when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.NO_ALARM);
+
+        //when
+        securityService.changeSensorActivationStatus(sensor1,true);
 
         //then
         verify(SecurityRepository).setAlarmStatus(AlarmStatus.PENDING_ALARM);
-}
+    }
 
 
 }

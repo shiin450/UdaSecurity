@@ -57,7 +57,7 @@
                     <version>3.0.0-M6</version>
                     <configuration>
                         <argLine>
-                            --add-opens SecurityServices/com.mukhtar.UdaSecurity.com.mukhtar.UdaSecurity.service=ALL-UNNAMED
+                            --add-opens SecurityServices/com.mukhtar.UdaSecurity.Services==ALL-UNNAMED
                         </argLine>
                     </configuration>
                 </plugin>
