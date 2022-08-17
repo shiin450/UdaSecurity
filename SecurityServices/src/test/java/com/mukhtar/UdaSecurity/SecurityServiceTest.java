@@ -2,13 +2,14 @@ package com.mukhtar.UdaSecurity;
 
 import com.mukhtar.UdaSecurity.ImageServices.ImageServicesInterface;
 import com.mukhtar.UdaSecurity.Services.SecurityService;
+import com.mukhtar.UdaSecurity.application.StatusListener;
 import com.mukhtar.UdaSecurity.data.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,20 +27,23 @@ class SecurityServiceTest {
     private SecurityRepository SecurityRepository;
     @Mock
     private ImageServicesInterface ImageServices;
+
     private SecurityService securityService;
     private final String uuid = UUID.randomUUID().toString();
     private Sensor sensor;
+    @Mock
+    private StatusListener statusListener;
 
 
     private Sensor populateSensors(){
         return new Sensor(uuid,SensorType.WINDOW);
 
     }
-    private Set<Sensor> getAllSensors(int count, boolean active) {
+    private Set<Sensor> getAllSensors() {
         Set<Sensor> sensors = new HashSet<>();
-        for (int i = 0; i  < count; i++) {sensors.add(new Sensor(uuid, SensorType.WINDOW));
+        for (int i = 0; i  < 5; i++) {sensors.add(new Sensor(uuid, SensorType.WINDOW));
         }
-        sensors.forEach(sensor -> sensor.setActive(active));
+        sensors.forEach(sensor -> sensor.setActive(true));
 
         return sensors;
     }
@@ -156,8 +160,91 @@ class SecurityServiceTest {
         when(ImageServices.imageContainsCat(any(), ArgumentMatchers.anyFloat())).thenReturn(true);
        securityService.processImage(CatImage);
         verify(SecurityRepository).setAlarmStatus(AlarmStatus.ALARM);
-
-
     }
+
+    /**
+     * *8.If the image service identifies an image that does not contain a cat,
+     * * change the status to no alarm as long as the sensors are not active.
+     */
+    @Test
+    void ImageService_Identifies_No_Cat_And_No_Sensor_Active_AlarmStatusNoAlarm(){
+        BufferedImage normalImage = new BufferedImage(600, 400, BufferedImage.TYPE_INT_RGB);
+        securityService.changeSensorActivationStatus(sensor,false);
+        when(ImageServices.imageContainsCat(any(), ArgumentMatchers.anyFloat())).thenReturn(false);
+        securityService.processImage(normalImage);
+        verify(SecurityRepository, atMostOnce()).setAlarmStatus(AlarmStatus.NO_ALARM);
+    }
+
+    /**
+     * *9.If the system is disarmed, set the status to no alarm.
+     */
+    @Test
+     void System_Disarmed_AlarmStatus_No_Alarm(){
+        securityService.setArmingStatus(ArmingStatus.DISARMED);
+        verify(SecurityRepository,atMostOnce()).setAlarmStatus(AlarmStatus.NO_ALARM);
+    }
+
+    /**
+     * * 10. If the system is armed, reset all sensors to inactive.
+     **
+     */
+    @ParameterizedTest
+    @EnumSource(value = ArmingStatus.class, names = {"ARMED_AWAY", "ARMED_HOME"})
+    void System_Armed_Deactivate_All_Sensors(ArmingStatus status){
+        Set<Sensor> sensors = getAllSensors();
+        when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        when(SecurityRepository.getSensors()).thenReturn(sensors);
+        securityService.setArmingStatus(status);
+
+        securityService.getSensors().forEach(sensor -> Assertions.assertEquals(false,sensor.getActive()));
+    }
+
+    /**
+     * * 11. If the system is armed-home while the camera shows a cat, set the alarm status to alarm.
+     */
+
+    @Test
+    void System_Armed_Home_And_Cat_Detected_AlarmStatusAlarm(){
+        BufferedImage CatImage = new BufferedImage(600, 400, BufferedImage.TYPE_INT_RGB);
+        when(SecurityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        when(ImageServices.imageContainsCat(any(), ArgumentMatchers.anyFloat())).thenReturn(true);
+        securityService.processImage(CatImage);
+        securityService.setArmingStatus(ArmingStatus.ARMED_HOME);
+        verify(SecurityRepository, atLeast(1)).setAlarmStatus(AlarmStatus.ALARM);
+    }
+
+    /**
+     * *12. AddStatus listener
+     */
+    @Test
+    void addStatusListener(){
+        securityService.addStatusListener(statusListener);
+    }
+
+    /**
+     * *13. Remove Status listener
+     */
+    @Test
+    void RemoveStatusListener(){
+        securityService.removeStatusListener(statusListener);
+    }
+
+    /**
+     * *14. add Sensor
+     */
+    @Test
+    void addSensor() {
+        SecurityRepository.addSensor(sensor);
+        verify(SecurityRepository,atLeast(1)).addSensor(sensor);
+    }
+    /**
+     * *15. remove Sensor
+     */
+    @Test
+    void removeSensor() {
+        SecurityRepository.removeSensor(sensor);
+        verify(SecurityRepository).removeSensor(sensor);
+    }
+
 }
 
