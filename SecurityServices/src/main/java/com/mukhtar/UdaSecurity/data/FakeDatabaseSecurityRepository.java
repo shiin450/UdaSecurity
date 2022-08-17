@@ -18,8 +18,8 @@ public class FakeDatabaseSecurityRepository implements SecurityRepository {
     public FakeDatabaseSecurityRepository() {
         this.alarmStatus = AlarmStatus.NO_ALARM;
         this.armingStatus = ArmingStatus.DISARMED;
-        sensors.addAll(List.of(new Sensor("Window Sensor", SensorType.WINDOW, false),
-                new Sensor("Door Sensor", SensorType.DOOR, true)));
+        sensors.addAll(List.of(new Sensor("Window Sensor", SensorType.WINDOW),
+                new Sensor("Door Sensor", SensorType.DOOR)));
     }
 
     @Override

@@ -34,7 +34,7 @@ public class SensorPanel extends JPanel {
         panelLabel.setFont(StyleService.HEADING_FONT);
         addNewSensorButton.addActionListener(e ->
                 addSensor(new Sensor(newSensorNameField.getText(),
-                        SensorType.valueOf(newSensorTypeDropdown.getSelectedItem().toString()), false)));
+                        SensorType.valueOf(newSensorTypeDropdown.getSelectedItem().toString()))));
 
         newSensorPanel = buildAddSensorPanel();
         sensorListPanel = new JPanel();
