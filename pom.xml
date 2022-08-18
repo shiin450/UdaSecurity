@@ -17,7 +17,15 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
-
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.1.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
@@ -39,8 +47,6 @@
             <artifactId>spotbugs-maven-plugin</artifactId>
             <version>4.7.1.1</version>
         </dependency>
-
-
     </dependencies>
     <build>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
@@ -64,7 +70,7 @@
                     <version>3.0.0-M6</version>
                     <configuration>
                         <argLine>
-                            --add-opens SecurityServices/com.mukhtar.UdaSecurity.Services==ALL-UNNAMED
+                            --add-opens SecurityServices/com.mukhtar.UdaSecurity.Services=ALL-UNNAMED
                         </argLine>
                     </configuration>
                 </plugin>
