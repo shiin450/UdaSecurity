@@ -134,7 +134,7 @@ public class SecurityService {
     }
 
     /**
-     * Send an image to the SecurityService for processing. The securityService will use its provided
+     * Send an image to the SecurityService for processing. The securityService will use it's provided
      * ImageService to analyze the image for cats and update the alarm status accordingly.
      * @param currentCameraImage
      */

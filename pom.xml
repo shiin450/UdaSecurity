@@ -33,6 +33,13 @@
             <version>4.6.1</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.spotbugs/spotbugs-maven-plugin -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-maven-plugin</artifactId>
+            <version>4.7.1.1</version>
+        </dependency>
+
 
     </dependencies>
     <build>

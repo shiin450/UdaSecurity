@@ -235,8 +235,9 @@ class SecurityServiceTest {
     @Test
     void addSensor() {
         SecurityRepository.addSensor(sensor);
-        verify(SecurityRepository,atLeast(1)).addSensor(sensor);
+        verify(SecurityRepository, atLeast(1)).addSensor(sensor);
     }
+
     /**
      * *15. remove Sensor
      */
@@ -244,6 +245,32 @@ class SecurityServiceTest {
     void removeSensor() {
         SecurityRepository.removeSensor(sensor);
         verify(SecurityRepository).removeSensor(sensor);
+    }
+
+    /**
+     * *16. Handle Sensor Deactivated, trying to increase test coverage
+     * *when alarm status Pending
+     */
+    @Test
+    void handleSensorDeactivated_AlarmStatus_Pending() {
+        sensor.setActive(true);
+        when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        securityService.changeSensorActivationStatus(sensor, false);
+        verify(SecurityRepository).setAlarmStatus(AlarmStatus.NO_ALARM);
+
+    }
+
+    /**
+     * *16. Handle Sensor Deactivated, trying to increase test coverage
+     * When alarm status alarm
+     */
+    @Test
+    void handleSensorDeactivated_AlarmStatus_Alarm() {
+        sensor.setActive(true);
+        when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
+        securityService.changeSensorActivationStatus(sensor, false);
+        verify(SecurityRepository, atMostOnce()).setAlarmStatus(AlarmStatus.PENDING_ALARM);
+
     }
 
 }
