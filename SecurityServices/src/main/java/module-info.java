@@ -1,6 +1,6 @@
-module SecurityServices{
+module com.mukhtar.UdaSecurity.SecurityServices{
 
-    requires ImageServices;
+    requires com.mukhtar.UdaSecurity.ImageServices;
     requires com.miglayout.swing;
     requires java.desktop;
     requires com.google.common;

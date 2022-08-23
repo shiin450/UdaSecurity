@@ -1,4 +1,4 @@
-package com.mukhtar.UdaSecurity.ImageServices;
+package com.mukhtar.UdaSecurity.Service;
 
 import java.awt.image.BufferedImage;
 import java.util.Random;

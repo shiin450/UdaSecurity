@@ -1,17 +1,14 @@
 package com.mukhtar.UdaSecurity;
 
-import com.mukhtar.UdaSecurity.ImageServices.ImageServicesInterface;
+import com.mukhtar.UdaSecurity.Service.ImageServicesInterface;
 import com.mukhtar.UdaSecurity.Services.SecurityService;
 import com.mukhtar.UdaSecurity.application.StatusListener;
 import com.mukhtar.UdaSecurity.data.*;
-import org.checkerframework.checker.units.qual.C;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,23 +28,26 @@ class SecurityServiceTest {
     private SecurityRepository SecurityRepository;
     @Mock
     private ImageServicesInterface ImageServices;
-
+    @Mock
     private SecurityService securityService;
-    private final String uuid = UUID.randomUUID().toString();
-    private Sensor sensor;
     @Mock
     private StatusListener statusListener;
 
+    private final String uuid = UUID.randomUUID().toString();
+    private Sensor sensor;
+
+
 
     private Sensor populateSensors(){
-        return new Sensor(uuid,SensorType.WINDOW);
+        return new Sensor(uuid,SensorType.DOOR);
 
     }
-    private Set<Sensor> getAllSensors() {
+    private Set<Sensor> getAllSensors(int count, boolean status) {
+        String uuid = UUID.randomUUID().toString();
         Set<Sensor> sensors = new HashSet<>();
-        for (int i = 0; i  < 5; i++) {sensors.add(new Sensor(uuid, SensorType.WINDOW));
+        for (int i = 0; i  < count; i++) {sensors.add(new Sensor(uuid, SensorType.DOOR));
         }
-        sensors.forEach(sensor -> sensor.setActive(true));
+        sensors.forEach(sensor -> sensor.setActive(status));
 
         return sensors;
     }
@@ -196,12 +197,11 @@ class SecurityServiceTest {
     @ParameterizedTest
     @EnumSource(value = ArmingStatus.class, names = {"ARMED_AWAY", "ARMED_HOME"})
     void System_Armed_Deactivate_All_Sensors(ArmingStatus status){
-        Set<Sensor> sensors = getAllSensors();
+        Set<Sensor> sensors = getAllSensors(3, true);
         when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         when(SecurityRepository.getSensors()).thenReturn(sensors);
         securityService.setArmingStatus(status);
-
-        securityService.getSensors().forEach(sensor -> assertEquals(false,sensor.getActive()));
+        securityService.getSensors().forEach(sensor -> {assertFalse(sensor.getActive());});
     }
 
     /**

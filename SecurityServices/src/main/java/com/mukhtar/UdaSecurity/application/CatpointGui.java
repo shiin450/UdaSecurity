@@ -1,7 +1,6 @@
 package com.mukhtar.UdaSecurity.application;
 
-import com.mukhtar.UdaSecurity.ImageServices.AwsImageService;
-import com.mukhtar.UdaSecurity.ImageServices.ImageServicesInterface;
+import com.mukhtar.UdaSecurity.Service.AwsImageService;
 import com.mukhtar.UdaSecurity.data.PretendDatabaseSecurityRepositoryImpl;
 import com.mukhtar.UdaSecurity.data.SecurityRepository;
 import net.miginfocom.swing.MigLayout;
@@ -16,9 +15,9 @@ import javax.swing.*;
  * all our dependencies and providing them to other classes as necessary.
  */
 public class CatpointGui extends JFrame {
-    private SecurityRepository securityRepository = new PretendDatabaseSecurityRepositoryImpl();
-    private ImageServicesInterface imageService = new AwsImageService();
-    private SecurityService securityService = new SecurityService(securityRepository, imageService);
+  private SecurityRepository securityRepository = new PretendDatabaseSecurityRepositoryImpl();
+    private AwsImageService awsImageService = new AwsImageService();
+    private SecurityService securityService = new SecurityService(securityRepository, awsImageService);
     private DisplayPanel displayPanel = new DisplayPanel(securityService);
     private ControlPanel controlPanel = new ControlPanel(securityService);
     private SensorPanel sensorPanel = new SensorPanel(securityService);

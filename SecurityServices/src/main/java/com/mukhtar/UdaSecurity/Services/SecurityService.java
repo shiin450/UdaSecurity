@@ -1,11 +1,8 @@
 package com.mukhtar.UdaSecurity.Services;
 
-import com.mukhtar.UdaSecurity.ImageServices.ImageServicesInterface;
+import com.mukhtar.UdaSecurity.Service.ImageServicesInterface;
 import com.mukhtar.UdaSecurity.application.StatusListener;
-import com.mukhtar.UdaSecurity.data.AlarmStatus;
-import com.mukhtar.UdaSecurity.data.ArmingStatus;
-import com.mukhtar.UdaSecurity.data.SecurityRepository;
-import com.mukhtar.UdaSecurity.data.Sensor;
+import com.mukhtar.UdaSecurity.data.*;
 
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
