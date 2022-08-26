@@ -2,8 +2,6 @@ package com.mukhtar.UdaSecurity.data;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.TreeSet;

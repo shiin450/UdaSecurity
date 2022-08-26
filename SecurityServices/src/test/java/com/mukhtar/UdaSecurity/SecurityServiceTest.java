@@ -255,15 +255,6 @@ class SecurityServiceTest {
      * * just for reaching 100% method coverage
      */
 
-    @Test
-    void RemoveAndAddSensor() {
-        securityService.addSensor(sensor);
-        securityService.removeSensor(sensor);
-    }
-    @Test
-    void AddAndRemoveStatusListener() {
-        securityService.addStatusListener(statusListener);
-        securityService.removeStatusListener(statusListener);
-    }
+
 }
 

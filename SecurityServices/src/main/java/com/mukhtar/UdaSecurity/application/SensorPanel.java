@@ -1,5 +1,6 @@
 package com.mukhtar.UdaSecurity.application;
 
+import com.mukhtar.UdaSecurity.data.AlarmStatus;
 import com.mukhtar.UdaSecurity.data.Sensor;
 import com.mukhtar.UdaSecurity.data.SensorType;
 import com.mukhtar.UdaSecurity.Services.SecurityService;
@@ -12,7 +13,7 @@ import javax.swing.*;
  * Panel that allows users to add sensors to their system. Sensors may be
  * manually set to "active" and "inactive" to test the system.
  */
-public class SensorPanel extends JPanel {
+public class SensorPanel extends JPanel implements StatusListener {
 
     private SecurityService securityService;
 
@@ -60,6 +61,23 @@ public class SensorPanel extends JPanel {
         p.add(addNewSensorButton, "span 3");
         return p;
     }
+
+    @Override
+    public void notify(AlarmStatus status) {
+        //no behaviour needed
+    }
+
+    @Override
+    public void catDetected(boolean catDetected) {
+        //no behaviour needed
+    }
+
+    @Override
+   public void sensorStatusChanged(){
+        updateSensorList(sensorListPanel);
+
+   }
+
 
     /**
      * Requests the current list of sensors and updates the provided panel to display them. Sensors
