@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collectors;
+
 
 
 /**
@@ -32,9 +32,7 @@ public class SecurityService {
         this.imageService = imageService;
     }
 
-    public boolean allSensorsByStatus(boolean activeStatus){
-        return getSensors().stream().allMatch(sensor -> sensor.getActive()==activeStatus);
-    }
+
 
     /**
      * Sets the current arming status for the system. Changing the arming status
@@ -44,7 +42,7 @@ public class SecurityService {
             if (catDetection && armingStatus == ArmingStatus.ARMED_HOME){
                 setAlarmStatus(AlarmStatus.ALARM);
             }
-            else if ( armingStatus == ArmingStatus.DISARMED){
+             if ( armingStatus == ArmingStatus.DISARMED){
                 setAlarmStatus(AlarmStatus.NO_ALARM);
             }
             else {
@@ -54,6 +52,9 @@ public class SecurityService {
 
         securityRepository.setArmingStatus(armingStatus);
         statusListeners.forEach(st -> st.sensorStatusChanged());
+    }
+    public boolean allSensorsByStatus(boolean activeStatus){
+        return getSensors().stream().allMatch(sensor -> sensor.getActive()==activeStatus);
     }
 
     /**

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -129,9 +130,6 @@ class SecurityServiceTest {
         sensor.setActive(true);
         securityService.changeSensorActivationStatus(sensor,true);
         verify(SecurityRepository).setAlarmStatus(AlarmStatus.ALARM);
-
-      //verify(SecurityRepository, never()).setAlarmStatus(any(AlarmStatus.class));
-
     }
 
     /**
@@ -155,13 +153,19 @@ class SecurityServiceTest {
      */
     @Test
     void Cat_Identified_while_Armed_Home_AlarmStatusAlarm(){
-        BufferedImage CatImage = new BufferedImage(600, 400, BufferedImage.TYPE_INT_RGB);
         when(SecurityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
-        when(ImageServices.imageContainsCat(any(), ArgumentMatchers.anyFloat())).thenReturn(true);
-       securityService.processImage(CatImage);
-        verify(SecurityRepository).setAlarmStatus(AlarmStatus.ALARM);
+        when(ImageServices.imageContainsCat(any(), anyFloat())).thenReturn(true);
+        securityService.processImage(mock(BufferedImage.class));
+        ArgumentCaptor<AlarmStatus> captor = ArgumentCaptor.forClass(AlarmStatus.class);
+        verify(SecurityRepository, atMostOnce()).setAlarmStatus(captor.capture());
+        assertEquals(captor.getValue(), AlarmStatus.ALARM);
+        BufferedImage catImage = new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
+        when(ImageServices.imageContainsCat(any(),anyFloat())).thenReturn(true);
+        when(SecurityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        securityService.processImage(catImage);
+        securityService.setArmingStatus(ArmingStatus.ARMED_HOME);
+        verify(SecurityRepository, times(2)).setAlarmStatus(AlarmStatus.ALARM);
     }
-
     /**
      * *8.If the image service identifies an image that does not contain a cat,
      * * change the status to no alarm as long as the sensors are not active.
@@ -205,41 +209,7 @@ class SecurityServiceTest {
     }
 
     /**
-     * *12. AddStatus listener
-     */
-    @Test
-    void addStatusListener(){
-        securityService.addStatusListener(statusListener);
-    }
-
-    /**
-     * *13. Remove Status listener
-     */
-    @Test
-    void RemoveStatusListener(){
-        securityService.removeStatusListener(statusListener);
-    }
-
-    /**
-     * *14. add Sensor
-     */
-    @Test
-    void addSensor() {
-        SecurityRepository.addSensor(sensor);
-        verify(SecurityRepository, atLeast(1)).addSensor(sensor);
-    }
-
-    /**
-     * *15. remove Sensor
-     */
-    @Test
-    void removeSensor() {
-        SecurityRepository.removeSensor(sensor);
-        verify(SecurityRepository).removeSensor(sensor);
-    }
-
-    /**
-     * *16. Handle Sensor Deactivated, trying to increase test coverage
+     * *11. Handle Sensor Deactivated, trying to increase test coverage
      * *when alarm status Pending
      */
     @Test
@@ -248,13 +218,27 @@ class SecurityServiceTest {
         when(SecurityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         securityService.changeSensorActivationStatus(sensor, false);
         verify(SecurityRepository).setAlarmStatus(AlarmStatus.NO_ALARM);
-
     }
 
     /**
      * * just for reaching 100% method coverage
      */
+    @Test
+    void AddSensor() {
+        securityService.addSensor(sensor);
+    }
+    @Test
+    void removeSensor(){
+        securityService.removeSensor(sensor);
+    }
 
-
+    @Test
+    void addStatusListener() {
+        securityService.addStatusListener(statusListener);
+    }
+@Test
+    void removeStatusListener(){
+    securityService.removeStatusListener(statusListener);
+}
 }
 

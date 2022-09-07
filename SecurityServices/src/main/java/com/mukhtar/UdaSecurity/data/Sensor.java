@@ -15,19 +15,23 @@ public class Sensor implements Comparable<Sensor> {
     private Boolean active;
     private SensorType sensorType;
 
+    /** Trying to fix this error.
+     * *Exception in thread "main" java.lang.RuntimeException: Unable to invoke no-args constructor
+     * * for class com.mukhtar.UdaSecurity.data.Sensor. Registering an InstanceCreator
+     * * with Gson for this type may fix this problem.
+     */
+    //No-args constructor just to fix above error.
+    public Sensor(){
+
+
+    };
+
     public Sensor(String name, SensorType sensorType) {
         this.name = name;
         this.sensorType = sensorType;
         this.sensorId = UUID.randomUUID();
         this.active = Boolean.FALSE;
     }
- /** Trying to fix this error.
-  * *Exception in thread "main" java.lang.RuntimeException: Unable to invoke no-args constructor
-  * * for class com.mukhtar.UdaSecurity.data.Sensor. Registering an InstanceCreator
-  * * with Gson for this type may fix this problem.
-  */
- //No-args constructor just to fix above error.
-    public Sensor(){};
 
     @Override
     public boolean equals(Object o) {
